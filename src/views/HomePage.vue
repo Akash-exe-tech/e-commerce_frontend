@@ -1,23 +1,18 @@
+<!-- src/views/HomePage.vue -->
 <script setup>
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 function goToRegister() {
-  router.push('/register');
-}
-
-function goToLogin() {
-  router.push('/login');
+  router.push('/register')
 }
 </script>
-
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="text-center">
       <h1 class="text-3xl font-bold mb-8 text-gray-800">Welcome to Our E-commerce Site</h1>
-      
+
       <div class="flex justify-center gap-4">
         <button
           @click="goToRegister"
@@ -25,9 +20,7 @@ function goToLogin() {
         >
           Register
         </button>
-
         <button
-          @click="goToLogin"
           class="cursor-pointer bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded shadow"
         >
           Login
@@ -36,6 +29,3 @@ function goToLogin() {
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>
