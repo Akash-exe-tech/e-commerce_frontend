@@ -1,3 +1,4 @@
+
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
     <div class="bg-white p-6 md:p-8 rounded-2xl w-full max-w-md">
@@ -47,7 +48,8 @@ const showConfirm = ref(false);
 const showPassword = ref(false);
 
 import { ref } from 'vue';
-import axios from 'axios';
+import api from '../axios'; // adjust path if needed
+
 
 const name = ref('');
 const email = ref('');
@@ -69,7 +71,8 @@ async function submitForm() {
   }
 
   try {
-    const response = await axios.post('http://127.0.0.1:8000/api/register', {
+    const response = await api.post('/register', {
+
       name: name.value,
       email: email.value,
       password: password.value,
@@ -95,4 +98,7 @@ async function submitForm() {
     success.value = '';
   }
 }
+const url = import.meta.env.VITE_API_BASE_URL;
+console.log(url);
+
 </script>
