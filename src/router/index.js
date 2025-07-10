@@ -4,7 +4,7 @@ import RegisterForm from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 
 const routes = [
-  { path: '/home', component: HomePage },
+  { path: '/', component: HomePage },
   { path: '/register', component: RegisterForm },
    {
     path: '/',
