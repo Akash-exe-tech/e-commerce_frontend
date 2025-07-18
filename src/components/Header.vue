@@ -6,7 +6,7 @@
         <div class="flex-shrink-0">
           <router-link to="/">
             <!-- Use relative path instead of C:/ -->
-            <img class="h-10 w-auto" src="C:\Users\annaj\Downloads\ecommerce\frontend\src\download (2).png" alt="Logo" />
+            <img class="h-10 w-auto" src="C:\Users\annaj\Downloads\ecommerce\frontend\public\download (2).png" alt="Logo" />
           </router-link>
         </div>
 
