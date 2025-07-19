@@ -5,11 +5,11 @@
       <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Create Your Account</h2>
 
       <form @submit.prevent="submitForm" class="flex flex-col space-y-4">
-        <!-- Name and Email stacked vertically -->
+        
         <input v-model="name" type="text" placeholder="Full Name" class="input" />
         <input v-model="email" type="email" placeholder="Email" class="input" />
 
-        <!-- Password with eye toggle -->
+        
         <div class="relative">
           <input :type="showPassword ? 'text' : 'password'" v-model="password" placeholder="Password" class="input pr-10" />
           <span @click="showPassword = !showPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500">
@@ -17,7 +17,7 @@
           </span>
         </div>
 
-        <!-- Confirm Password with eye toggle -->
+        
         <div class="relative">
           <input :type="showConfirm ? 'text' : 'password'" v-model="confirmPassword" placeholder="Confirm Password" class="input pr-10" />
           <span @click="showConfirm = !showConfirm" class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500">
@@ -48,7 +48,7 @@ const showConfirm = ref(false);
 const showPassword = ref(false);
 
 import { ref } from 'vue';
-import api from '../axios'; // adjust path if needed
+import api from '../axios'; 
 
 
 const name = ref('');
