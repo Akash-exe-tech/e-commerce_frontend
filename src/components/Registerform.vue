@@ -82,7 +82,7 @@ async function submitForm() {
     success.value = 'Registration successful!';
     error.value = '';
 
-    // Clear fields
+    
     name.value = '';
     email.value = '';
     password.value = '';

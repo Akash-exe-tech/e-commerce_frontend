@@ -2,6 +2,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import Banner from '../components/Banner.vue'
+import FeaturedProducts from '../components/FeaturedProducts.vue'
 const router = useRouter()
 
 function goToRegister() {
@@ -14,11 +15,11 @@ function goToRegister() {
 
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
       <div class="text-center">
-        <h1 class="text-3xl font-bold mb-8 text-gray-800">
+        <!-- <h1 class="text-3xl font-bold mb-8 text-gray-800">
           Welcome to Our E-commerce Site
-        </h1>
+        </h1> -->
 
-        <div class="flex justify-center gap-4">
+        <!-- <div class="flex justify-center gap-4">
           <button
             @click="goToRegister"
             class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow"
@@ -30,9 +31,11 @@ function goToRegister() {
           >
             Login
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
+        <FeaturedProducts />
+
   </div>
 </template>
 

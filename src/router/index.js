@@ -1,16 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
-import RegisterForm from '../views/RegisterView.vue'
+import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 
 const routes = [
   { path: '/', component: HomePage },
-  { path: '/register', component: RegisterForm },
-   {
-    path: '/',
-    name: 'Login',
-    component: LoginView,
-  },
+  { path: '/register', component: RegisterView },
+  { path: '/login', component: LoginView }, // ✅ fix here
 ]
 
 const router = createRouter({
