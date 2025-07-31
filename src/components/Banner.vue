@@ -9,11 +9,10 @@
       <p class="text-base md:text-2xl text-gray-600 mb-4">
         Great deals and new arrivals just a click away. Start shopping now!
       </p>
-      <router-link
-        to="/products"
-        class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded shadow transition"
+      <router-link to="/shop">
+        <button class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded shadow transition"
       >
-        Shop Now
+        Shop Now</button>
       </router-link>
     </div>
 
