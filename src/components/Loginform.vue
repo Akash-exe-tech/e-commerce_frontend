@@ -1,14 +1,35 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-      <h2 class="text-2xl font-semibold mb-4 text-center">Login</h2>
-      <form @submit.prevent="login">
-        <input v-model="email" type="email" placeholder="Email" class="w-full border px-4 py-2 mb-3 rounded" />
-        <input v-model="password" type="password" placeholder="Password" class="w-full border px-4 py-2 mb-4 rounded" />
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl w-full max-w-md relative">
+    
+      <!-- <button  @click="router.push('/')" class="absolute top-2 right-2 text-xl text-gray-500 hover:text-gray-800">
+        ✖
+      </button> -->
+
+      <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+
+    
+      <p v-if="error" class="text-red-500 text-sm mb-2">{{ error }}</p>
+
+      <form @submit.prevent="handleLogin">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-1">Email</label>
+          <input v-model="email" type="email" class="w-full border rounded px-3 py-2" required />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-1">Password</label>
+          <input v-model="password" type="password" class="w-full border rounded px-3 py-2" required />
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-gray-800">
+          Login
+        </button>
       </form>
-      <p class="text-red-500 mt-2 text-center" v-if="error">{{ error }}</p>
-      <button @click="$emit('close')" class="mt-4 text-blue-500 hover:underline w-full text-center">Close</button>
+
+      
+      <p class="text-center text-sm mt-4">
+        Don't have an account?
+        <router-link to="/register" class="text-blue-500 hover:underline">Sign up</router-link>
+      </p>
     </div>
   </div>
 </template>
@@ -16,25 +37,28 @@
 <script setup>
 import { ref } from 'vue'
 import api from '../axios.js'
+import { useAuth } from '../composables/useAuth.js'
 
 const emit = defineEmits(['close'])
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const { login: authLogin } = useAuth()
 
-const login = async () => {
+const handleLogin = async () => {
   try {
     const response = await api.post('/login', {
       email: email.value,
-      password: password.value
+      password: password.value,
     })
+
     localStorage.setItem('token', response.data.token)
     alert('Login successful!')
-    emit('close')
+    emit('close') 
+    window.location.href = '/' 
   } catch (err) {
     error.value = err.response?.data?.message || 'Login failed'
   }
 }
 </script>
-

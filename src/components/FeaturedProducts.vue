@@ -34,6 +34,8 @@ const featuredProducts = [
   { id: 3, name: "Product 3", price: "$49.99", image: "/images/product3.jpg" },
   { id: 4, name: "Product 4", price: "$59.99", image: "/images/product4.jpg" },
   { id: 5, name: "Product 5", price: "$69.99", image: "/images/product5.jpg" },
+  { id: 6, name: "Product 6", price: "$69.99", image: "/images/product5.jpg" },
+  
 ];
 
 const sliderRef = ref(null);
