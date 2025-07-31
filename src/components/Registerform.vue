@@ -2,8 +2,6 @@
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
     <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md relative">
 
-      <!-- <button @click="$emit('close')" class="absolute top-2 right-3 text-gray-500 text-xl hover:text-red-600">❌</button> -->
-
       <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Create Your Account</h2>
 
       <form @submit.prevent="submitForm" class="flex flex-col space-y-4">
