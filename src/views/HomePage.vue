@@ -1,38 +1,51 @@
-
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import Banner from '../components/Banner.vue'
-const router = useRouter()
+import FeaturedProducts from '../components/FeaturedProducts.vue'
+import LoginForm from '../components/Loginform.vue'
+import RegisterForm from '../components/Registerform.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 
-function goToRegister() {
-  router.push('/register')
+const showLogin = ref(false)
+const showRegister = ref(false)
+
+const openLogin = () => {
+  showLogin.value = true
+  showRegister.value = false
+}
+
+const openRegister = () => {
+  showLogin.value = false
+  showRegister.value = true
+}
+
+const closeModals = () => {
+  showLogin.value = false
+  showRegister.value = false
 }
 </script>
+
 <template>
   <div>
+    <Header @open-login="openLogin" />
+
     <Banner />
+    <FeaturedProducts />
+    <Footer />
 
-    <div class="min-h-screen flex items-center justify-center bg-gray-100">
-      <div class="text-center">
-        <h1 class="text-3xl font-bold mb-8 text-gray-800">
-          Welcome to Our E-commerce Site
-        </h1>
+   
+    <LoginForm
+      v-if="showLogin"
+      @close="closeModals"
+      @switch-to-register="openRegister"
+    />
 
-        <div class="flex justify-center gap-4">
-          <button
-            @click="goToRegister"
-            class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow"
-          >
-            Register
-          </button>
-          <button
-            class="cursor-pointer bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded shadow"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    </div>
+ 
+    <RegisterForm
+      v-if="showRegister"
+      @close="closeModals"
+      @switch-to-login="openLogin"
+    />
   </div>
 </template>
-
