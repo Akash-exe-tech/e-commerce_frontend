@@ -1,33 +1,6 @@
-<template>
-  <div class="p-6 max-w-4xl mx-auto">
-    <div class="flex flex-col md:flex-row gap-6">
-      <!-- Product Image -->
-      <div class="w-full md:w-1/2">
-        <img :src="product.image" alt="Product" class="w-full rounded shadow" />
-      </div>
-
-      <!-- Product Info -->
-      <div class="w-full md:w-1/2 space-y-4">
-        <h1 class="text-2xl font-bold">{{ product.name }}</h1>
-        <p class="text-gray-600">{{ product.description }}</p>
-        <p class="text-blue-600 font-bold text-lg">₹{{ product.price }}</p>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-4 mt-4">
-  <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 cursor-pointer">
-            Add to Cart
-          </button>
-  <button class="bg-white text-black border border-black px-4 py-2 rounded hover:bg-black hover:text-white transition cursor-pointer">
-            Add to Wishlist
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
+import { addToCart } from '../axios';
+
 export default {
   name: 'ProductDetails',
   data() {
@@ -77,6 +50,23 @@ export default {
 
     const slug = this.$route.params.slug;
     this.product = products.find(p => p.slug === slug);
+  },
+  methods: {
+    handleAddToCart() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please login to add items to your cart.");
+        return;
+      }
+      addToCart(this.product, token)
+        .then(() => {
+          alert('Product added to cart successfully!');
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Something went wrong while adding to cart.');
+        });
+    }
   }
 };
 </script>
