@@ -1,9 +1,11 @@
+
+
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
-import RegisterForm from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 import ShopPage from '../views/Shop.vue'
 import ProductDetails from '../views/ProductDetails.vue'
+import RegisterView from '../views/RegisterView.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -15,7 +17,8 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 })
 
 export default router
+
