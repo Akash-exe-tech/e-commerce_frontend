@@ -1,9 +1,10 @@
 
-
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import CartPage from '../components/CartPage.vue'
+import Profile from '../pages/Profile.vue'
 
 const routes = [
   {
@@ -20,12 +21,44 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterView
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: CartPage
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: { requiresAuth: true } 
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+ 
+      console.log('Route requires auth, but no token found. Redirecting to login.')
+      next('/login')
+    } else {
+
+      console.log('Token found, allowing access to protected route')
+      next()
+    }
+  } else {
+
+    next()
+  }
 })
 
 export default router
