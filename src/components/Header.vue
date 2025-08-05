@@ -22,12 +22,12 @@
         <router-link to="/wishlist" title="Wishlist">
           <button class="bg-white p-2 rounded-full hover:bg-gray-200 transition cursor-pointer" title="Wishlist">
 
-            <img src="C:\Users\annaj\Downloads\ecommerce\frontend\public\download.png" alt="Wishlist" class="h-5 w-5" />
+            <img src="\download.png" alt="Wishlist" class="h-5 w-5" />
           </button>
         </router-link>
         <router-link to="/cart" title="Cart">
           <button class="bg-white p-2 rounded-full hover:bg-gray-200 transition cursor-pointer" title="Cart">
-            <img src="C:\Users\annaj\Downloads\ecommerce\frontend\public\images (2).png" alt="Cart" class="h-5 w-5" />
+            <img src="\download (1).png" alt="Cart" class="h-5 w-5" />
           </button>
         </router-link>
       </div>

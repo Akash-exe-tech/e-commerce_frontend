@@ -1,72 +1,68 @@
-<script>
-import { addToCart } from '../axios';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
 
-export default {
-  name: 'ProductDetails',
-  data() {
-    return {
-      product: {}
-    };
-  },
-  created() {
-    const products = [
-      {
-        id: 1,
-        slug: 'bluetooth-speaker',
-        name: 'Bluetooth Speaker',
-        brand: 'Sony',
-        price: 2999,
-        image: '/images.jpeg',
-        description: 'Portable wireless speaker with high-quality sound and bass.'
-      },
-      {
-        id: 2,
-        slug: 'nike-running-shoes',
-        name: 'Running Shoes',
-        brand: 'Nike',
-        price: 4999,
-        image: '/download (3).jpeg',
-        description: 'Comfortable running shoes designed for performance and durability.'
-      },
-      {
-        id: 3,
-        slug: 'samsung-led-tv',
-        name: 'LED TV',
-        brand: 'Samsung',
-        price: 24999,
-        image: '/download (2).jpeg',
-        description: '43-inch Smart LED TV with HD resolution and built-in streaming apps.'
-      },
-      {
-        id: 4,
-        slug: 'boat-smartwatch',
-        name: 'Smartwatch',
-        brand: 'boAt',
-        price: 1599,
-        image: '/download (1).jpeg',
-        description: 'Stylish smartwatch with fitness tracking, notifications, and more.'
-      }
-    ];
+const product = ref(null)
+const route = useRoute()
+const id = route.params.id
 
-    const slug = this.$route.params.slug;
-    this.product = products.find(p => p.slug === slug);
-  },
-  methods: {
-    handleAddToCart() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert("Please login to add items to your cart.");
-        return;
-      }
-      addToCart(this.product, token)
-        .then(() => {
-          alert('Product added to cart successfully!');
-        })
-        .catch(err => {
-          console.error(err);
-          alert('Something went wrong while adding to cart.');
-        });
-    }
-  }
-};
+onMounted(() => {
+  axios.get(`http://localhost:8000/api/products/${id}`)
+    .then(res => {
+      product.value = res.data
+    })
+    .catch(err => {
+      console.error('Product not found:', err)
+    })
+})
+
+function addToCart() {
+  console.log('Add to cart clicked:', product.value.id)
+  // Add your cart API logic here
+}
+
+function addToWishlist() {
+  console.log('Add to wishlist clicked:', product.value.id)
+  // Add your wishlist API logic here
+}
 </script>
+
+<template>
+  <div class="p-8 max-w-4xl mx-auto">
+    <div v-if="product" class="border p-6 rounded-lg shadow grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Product Image -->
+      <div>
+        <img :src="product.image_url" alt="Product Image" class="w-full h-auto object-cover rounded-lg" />
+      </div>
+
+      <!-- Product Info -->
+      <div>
+        <h1 class="text-3xl font-bold mb-2">{{ product.name }}</h1>
+        <p class="text-gray-600 mb-4">{{ product.description }}</p>
+        <p class="text-green-700 font-semibold text-xl mb-4">₹{{ product.price }}</p>
+        
+        <!-- Buttons -->
+        <!-- Buttons -->
+<div class="flex space-x-4">
+  <button @click="addToCart"
+    class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 cursor-pointer">
+    Add to Cart
+  </button>
+
+  <button @click="addToWishlist"
+    class="bg-white text-black border border-black px-4 py-2 rounded hover:bg-gray-100 cursor-pointer">
+    Add to Wishlist
+  </button>
+</div>
+
+      </div>
+
+    </div>
+
+    <div v-else>
+      Loading...
+    </div>
+  </div>
+</template>
