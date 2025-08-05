@@ -1,3 +1,38 @@
+<!-- ShopNow.vue -->
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const products = ref([])
+const categories = ref([]) // Placeholder for categories
+const router = useRouter()
+
+const token = localStorage.getItem('token')
+
+const fetchProducts = () => {
+  axios.get('http://localhost:8000/api/products', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(response => {
+      products.value = response.data
+    })
+    .catch(error => {
+      console.error('Error fetching products:', error)
+    })
+}
+
+onMounted(() => {
+  fetchProducts()
+})
+
+const goToDetails = (id) => {
+  router.push(`/product/${id}`)
+}
+</script>
+
 <template>
   <div class="flex min-h-screen bg-gray-100">
     <!-- Sidebar -->
@@ -11,74 +46,29 @@
     </aside>
 
     <!-- Product Grid -->
-    
-    <main class="flex-1 p-6">
-      <h1 class="text-2xl font-bold mb-6">All Products</h1>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <router-link
+    <div class="flex-1 p-4">
+      <h1 class="text-2xl font-bold mb-4">Shop Now</h1>
+      <div v-if="products.length === 0" class="text-gray-600">
+        No products available. Please add products from Postman.
+      </div>
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div
           v-for="product in products"
           :key="product.id"
-          :to="`/product/${product.slug}`"
-          class="bg-white p-4 rounded-lg shadow hover:shadow-lg transition block"
+          @click="goToDetails(product.id)"
+          class="border rounded-lg p-4 shadow-md cursor-pointer hover:shadow-lg transition"
         >
-          <div class="w-full aspect-[4/3] mb-4 overflow-hidden rounded bg-gray-100">
-            <img :src="product.image" alt="product" class="w-full h-full object-cover">
-          </div>
-          <h2 class="text-lg font-semibold">{{ product.brand }}</h2>
-          <p class="text-gray-600">{{ product.name }}</p>
-          <p class="text-blue-600 font-bold mt-2">₹{{ product.price }}</p>
-        </router-link>
-
-
-         
-      </div>
-    </main>
-  </div>
-  
-</template>
-
-<script>
-export default {
-  name: 'ShopPage',
-  data() {
-    return {
-      categories: ['Electronics', 'Footwear', 'Clothing', 'Home Appliances'],
-      products: [
-        {
-          id: 1,
-          name: 'Bluetooth Speaker',
-          slug: 'bluetooth-speaker',
-          price: 2999,
+         <img
+            :src="product.image_url"
+            alt="Product Image"
+            class="w-full h-48 object-contain mb-2 rounded bg-white"
+            @error="$event.target.src='https://via.placeholder.com/150'"
+          />
+          <h2 class="text-lg font-semibold">{{ product.name }}</h2>
           
-          image: 'images.jpeg'
-        },
-        {
-          id: 2,
-          name: 'Running Shoes',
-          slug: 'nike-running-shoes',
-          price: 4999,
-          image: 'download (3).jpeg'
-        },
-        {
-          id: 3,
-          name: 'LED TV',
-          slug: 'samsung-led-tv',
-          price: 24999,
-          image: 'download (2).jpeg'
-        },
-        {
-          id: 4,
-          name: 'Smartwatch',
-          slug: 'boat-smartwatch',
-          price: 1599,
-          image: 'download (1).jpeg'
-        },
-      ]
-    };
-  }
-};
-</script>
-
-<style scoped>
-/* Optional styling */
-</style>
+          <p class="text-green-600 font-bold">₹{{ product.price }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
