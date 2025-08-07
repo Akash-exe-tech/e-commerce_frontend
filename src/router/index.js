@@ -3,8 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
-import CartPage from '../components/CartPage.vue'
-import Profile from '../pages/Profile.vue'
+import CartPage from '../views/CartPage.vue'
+import Profile from '../views/Profile.vue'
 
 const routes = [
   {
