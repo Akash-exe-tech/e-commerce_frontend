@@ -4,7 +4,8 @@ import ShopPage from '../views/Shop.vue'
 import ProductDetails from '../views/ProductDetails.vue'
 import CartPage from '../components/CartPage.vue'
 import Profile from '../pages/Profile.vue'
-
+import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
 const routes = [
   {
     path: '/',
@@ -31,7 +32,7 @@ const routes = [
     name: 'Profile',
     component: Profile,
     meta: { requiresAuth: true } 
-  }
+  },
   { path: '/', name: 'Home', component: HomePage },
   { path: '/shop', name: 'Shop', component: ShopPage },
   { path: '/product/:id', name: 'ProductDetails', component: ProductDetails },

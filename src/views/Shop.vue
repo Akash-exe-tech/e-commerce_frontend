@@ -9,9 +9,10 @@ const categories = ref([]) // Placeholder for categories
 const router = useRouter()
 
 const token = localStorage.getItem('token')
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const fetchProducts = () => {
-  axios.get('http://localhost:8000/api/products', {
+  axios.get(`${baseURL}/products`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

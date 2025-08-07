@@ -6,9 +6,10 @@ import axios from 'axios'
 const product = ref(null)
 const route = useRoute()
 const id = route.params.id
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 onMounted(() => {
-  axios.get(`http://localhost:8000/api/products/${id}`)
+  axios.get(`${import.meta.env.VITE_API_BASE_URL}/products/${id}`)
     .then(res => {
       product.value = res.data
     })
@@ -23,8 +24,20 @@ function addToCart() {
 }
 
 function addToWishlist() {
-  console.log('Add to wishlist clicked:', product.value.id)
-  // Add your wishlist API logic here
+  axios.post(`${import.meta.env.VITE_API_BASE_URL}/wishlist`, {
+    product_id: product.value.id
+  }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  .then(res => {
+    console.log(res.data.message)
+  })
+  .catch(err => {
+    console.error('Wishlist error:', err)
+  })
+
 }
 </script>
 
