@@ -3,16 +3,17 @@
   <div class="max-w-5xl mx-auto p-4">
     <h2 class="text-2xl font-bold mb-6">Your Shopping Cart</h2>
 
- 
     <div v-if="loading" class="text-gray-600">Loading cart...</div>
-
 
     <div v-else-if="cartItems.length === 0" class="text-gray-500">
       Your cart is empty.
+      <router-link to="/products" class="text-blue-600 underline ml-2">
+        Shop Now
+      </router-link>
     </div>
 
-
     <div v-else class="space-y-4">
+      
       <div
         v-for="item in cartItems"
         :key="item.id"
@@ -31,13 +32,16 @@
             class="w-16 border px-2 py-1 rounded"
             min="1"
           />
-          <button @click="removeItem(item.id)" class="text-red-500 hover:underline">
+          <button
+            @click="removeItem(item.id)"
+            class="text-red-500 hover:underline"
+          >
             🗑 Remove
           </button>
         </div>
       </div>
 
-     
+      
       <div class="mt-6 text-right">
         <p class="text-lg font-semibold">Subtotal: ₹{{ subtotal }}</p>
         <button
@@ -77,7 +81,6 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../axios';
 
-
 const cartItems = ref([]);
 const loading = ref(true);
 const router = useRouter();
@@ -96,19 +99,29 @@ const fetchCart = async () => {
 
 const updateQuantity = async (itemId, quantity) => {
   if (quantity < 1) return;
-  await api.put(`/cart/${itemId}`, { quantity });
-
-  await fetchCart();
+  try {
+    await api.put(`/cart/${itemId}`, { quantity });
+    await fetchCart();
+  } catch (err) {
+    console.error('Failed to update quantity:', err);
+  }
 };
 
 const removeItem = async (itemId) => {
-  await api.delete(`/cart/${itemId}`);
-
-  await fetchCart();
+  if (!confirm('Remove this item from your cart?')) return;
+  try {
+    await api.delete(`/cart/${itemId}`);
+    await fetchCart();
+  } catch (err) {
+    console.error('Failed to remove cart item:', err);
+  }
 };
 
 const subtotal = computed(() =>
-  cartItems.value.reduce((sum, item) => sum + item.quantity * item.product.price, 0)
+  cartItems.value.reduce(
+    (sum, item) => sum + item.quantity * item.product.price,
+    0
+  )
 );
 
 const goToCheckout = () => {
