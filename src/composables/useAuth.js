@@ -9,17 +9,15 @@ export function useAuth() {
 
   const login = (newToken) => {
     token.value = newToken
-    localStorage.setItem('token', newToken)
+    localStorage.setItem('token', newToken)  // ✅ Save the actual token string
   }
 
   const logout = () => {
     token.value = null
     localStorage.removeItem('token')
-    // Redirect to login after logout
     window.location.href = '/login'
   }
 
-  // Function to check if token exists and is valid
   const checkAuth = () => {
     const storedToken = localStorage.getItem('token')
     if (storedToken && storedToken !== token.value) {

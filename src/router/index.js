@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import ShopPage from '../views/Shop.vue'
 import ProductDetails from '../views/ProductDetails.vue'
+import CartPage from '../views/CartPage.vue'
+import Profile from '../views/Profile.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import CartPage from '../views/CartPage.vue'
@@ -31,11 +33,11 @@ const routes = [
     name: 'Cart',
     component: CartPage
   },
-    {
-    path: '/wishlist',
-    name: 'Wishlist',
-    component: WishlistPage
-  },
+  {
+  path: '/checkout',
+  name: 'Checkout',
+  component: () => import('../views/CheckoutPage.vue') // path to your checkout page
+},
   {
     path: '/profile',
     name: 'Profile',

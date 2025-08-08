@@ -50,6 +50,27 @@
         >
           Proceed to Checkout
         </button>
+        <div v-if="showPayment" class="mt-6 border-t pt-4">
+  <h3 class="text-lg font-semibold mb-2">Select Payment Method</h3>
+  <select v-model="paymentMethod" class="border p-2 rounded w-full md:w-1/2">
+    <option disabled value="">Choose a payment method</option>
+    <option v-for="method in paymentMethods" :key="method.key" :value="method.key">
+      {{ method.label }}
+    </option>
+  </select>
+
+  <button
+    @click="makePayment"
+    class="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+  >
+    Pay Now
+  </button>
+
+  <p v-if="paymentSuccess" class="mt-4 text-green-600 font-medium">
+    ✅ Payment successful! Thank you for your purchase.
+  </p>
+</div>
+
       </div>
     </div>
   </div>
