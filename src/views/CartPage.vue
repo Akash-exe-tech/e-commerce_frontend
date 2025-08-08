@@ -1,4 +1,4 @@
-Akash Suresh, Now
+
 <template>
   <div class="max-w-5xl mx-auto p-4">
     <h2 class="text-2xl font-bold mb-6">Your Shopping Cart</h2>
