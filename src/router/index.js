@@ -2,12 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import ShopPage from '../views/Shop.vue'
 import ProductDetails from '../views/ProductDetails.vue'
-import CartPage from '../components/CartPage.vue'
-import Profile from '../pages/Profile.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import CartPage from '../views/CartPage.vue'
+import WishlistPage from '../views/wishlist.vue'
 import Profile from '../views/Profile.vue'
+import AboutUs from '../views/AboutUs.vue'
+import ContactUs from '../views/ContactUs.vue'
 
 const routes = [
   {
@@ -30,15 +31,33 @@ const routes = [
     name: 'Cart',
     component: CartPage
   },
+    {
+    path: '/wishlist',
+    name: 'Wishlist',
+    component: WishlistPage
+  },
   {
     path: '/profile',
     name: 'Profile',
     component: Profile,
     meta: { requiresAuth: true } 
   },
-  { path: '/', name: 'Home', component: HomePage },
-  { path: '/shop', name: 'Shop', component: ShopPage },
-  { path: '/product/:id', name: 'ProductDetails', component: ProductDetails },
+  { path: '/shop',
+     name: 'Shop',
+      component: ShopPage 
+  },
+
+  { 
+    path: '/product/:id',
+    name: 'ProductDetails',
+    component: ProductDetails
+   },
+   { path: '/about',
+     component: AboutUs
+    },
+   { path: '/contact',
+     component: ContactUs
+   },
 ]
 
 const router = createRouter({
