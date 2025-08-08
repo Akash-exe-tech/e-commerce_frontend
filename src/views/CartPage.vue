@@ -1,3 +1,4 @@
+Akash Suresh, Now
 <template>
   <div class="max-w-5xl mx-auto p-4">
     <h2 class="text-2xl font-bold mb-6">Your Shopping Cart</h2>
@@ -45,6 +46,27 @@
         >
           Proceed to Checkout
         </button>
+        <div v-if="showPayment" class="mt-6 border-t pt-4">
+  <h3 class="text-lg font-semibold mb-2">Select Payment Method</h3>
+  <select v-model="paymentMethod" class="border p-2 rounded w-full md:w-1/2">
+    <option disabled value="">Choose a payment method</option>
+    <option v-for="method in paymentMethods" :key="method.key" :value="method.key">
+      {{ method.label }}
+    </option>
+  </select>
+
+  <button
+    @click="makePayment"
+    class="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+  >
+    Pay Now
+  </button>
+
+  <p v-if="paymentSuccess" class="mt-4 text-green-600 font-medium">
+    ✅ Payment successful! Thank you for your purchase.
+  </p>
+</div>
+
       </div>
     </div>
   </div>
@@ -75,11 +97,13 @@ const fetchCart = async () => {
 const updateQuantity = async (itemId, quantity) => {
   if (quantity < 1) return;
   await api.put(`/cart/${itemId}`, { quantity });
+
   await fetchCart();
 };
 
 const removeItem = async (itemId) => {
   await api.delete(`/cart/${itemId}`);
+
   await fetchCart();
 };
 
