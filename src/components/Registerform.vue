@@ -27,25 +27,35 @@
         <p v-if="error" class="text-red-500 text-sm text-center">{{ error }}</p>
         <p v-if="success" class="text-green-500 text-sm text-center">{{ success }}</p>
 
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">Register</button>
+        <button type="submit" :disabled="loading" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50">
+          {{ loading ? 'Registering...' : 'Register' }}
+        </button>
       </form>
 
       <p class="mt-4 text-center text-sm">
         Already have an account?
-        <button @click="emit('switch-to-login')" class="text-blue-500 hover:underline">Login</button>
+        <button @click="goToLogin" class="text-blue-500 hover:underline">Login</button>
       </p>
+      
+
+      <button @click="emit('close')" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+        ✕
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../axios'
 
+const router = useRouter()
 const emit = defineEmits(['close', 'switch-to-login'])
 
 const showConfirm = ref(false)
 const showPassword = ref(false)
+const loading = ref(false)
 
 const name = ref('')
 const email = ref('')
@@ -58,14 +68,17 @@ const success = ref('')
 async function submitForm() {
   error.value = ''
   success.value = ''
+  loading.value = true
 
   if (!name.value || !email.value || !password.value || !confirmPassword.value || !phone.value) {
     error.value = 'Please fill in all fields.'
+    loading.value = false
     return
   }
 
   if (password.value !== confirmPassword.value) {
     error.value = 'Passwords do not match.'
+    loading.value = false
     return
   }
 
@@ -77,7 +90,8 @@ async function submitForm() {
       phone: phone.value
     })
 
-    success.value = 'Registration successful!'
+    success.value = 'Registration successful! '
+    
     name.value = ''
     email.value = ''
     password.value = ''
@@ -86,6 +100,7 @@ async function submitForm() {
 
     setTimeout(() => {
       emit('close')
+      router.push('/login?registered=true') 
     }, 1500)
   } catch (err) {
     if (err.response && err.response.status === 422) {
@@ -93,6 +108,15 @@ async function submitForm() {
     } else {
       error.value = err.response?.data?.message || 'Something went wrong.'
     }
+  } finally {
+    loading.value = false
   }
+}
+
+function goToLogin() {
+
+  emit('close')
+  router.push('/login')
+  
 }
 </script>

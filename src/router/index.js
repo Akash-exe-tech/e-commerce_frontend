@@ -2,111 +2,73 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import ShopPage from '../views/Shop.vue'
 import ProductDetails from '../views/ProductDetails.vue'
-import CartPage from '../views/CartPage.vue'
-import Profile from '../views/Profile.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import CartPage from '../views/CartPage.vue'
 import WishlistPage from '../views/wishlist.vue'
+import CheckoutPage from '../views/CheckoutPage.vue'
 import Profile from '../views/Profile.vue'
 import AboutUs from '../views/AboutUs.vue'
 import ContactUs from '../views/ContactUs.vue'
+import AdminLayout from '../components/AdminLayout.vue'
+import AdminDashboard from '../views/admin/Dashboard.vue'
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: HomePage
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: LoginView
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: RegisterView
-  },
-  {
-    path: '/cart',
-    name: 'Cart',
-    component: CartPage
-  },
-  {
-  path: '/checkout',
-  name: 'Checkout',
-  component: () => import('../views/CheckoutPage.vue') // path to your checkout page
-},
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    meta: { requiresAuth: true } 
-  },
-  { path: '/shop',
-     name: 'Shop',
-      component: ShopPage 
-  },
+  { path: '/', name: 'Home', component: HomePage },
+  { path: '/login', name: 'Login', component: LoginView },
+  { path: '/register', name: 'Register', component: RegisterView },
+  { path: '/cart', name: 'Cart', component: CartPage },
+  { path: '/wishlist', name: 'Wishlist', component: WishlistPage },
+  { path: '/checkout', name: 'Checkout', component: CheckoutPage },
+  { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
+  { path: '/shop', name: 'Shop', component: ShopPage },
+  { path: '/product/:id', name: 'ProductDetails', component: ProductDetails },
+  { path: '/about', component: AboutUs },
+  { path: '/contact', component: ContactUs },
 
-  { 
-    path: '/product/:id',
-    name: 'ProductDetails',
-    component: ProductDetails
-   },
-   { path: '/about',
-     component: AboutUs
-    },
-   { path: '/contact',
-     component: ContactUs
-   },
+
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAuth: true, requiresAdmin: true },
+    redirect: '/admin/dashboard', 
+    children: [
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        component: AdminDashboard,
+      },
+    ],
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 })
-
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  
+  const userStr = localStorage.getItem('user')
+  const user = userStr ? JSON.parse(userStr) : null
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
- 
-      console.log('Route requires auth, but no token found. Redirecting to login.')
-      next('/login')
-    } else {
-
-      console.log('Token found, allowing access to protected route')
-      next()
+      console.log('Auth required but no token found. Redirecting to login.')
+      return next('/login')
     }
-  } else {
 
-    next()
-  }
-})
-
-
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!token) {
- 
-      console.log('Route requires auth, but no token found. Redirecting to login.')
-      next('/login')
-    } else {
-
-      console.log('Token found, allowing access to protected route')
-      next()
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
+      if (!user || !user.roles || !user.roles.includes('admin')) {
+        console.log('Admin access required but user is not admin. Redirecting to home.')
+        return next('/') 
+      }
     }
-  } else {
 
-    next()
+    return next()
   }
+
+  next()
 })
 
 export default router

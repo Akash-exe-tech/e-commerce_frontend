@@ -43,7 +43,6 @@ const form = ref({
 const successMessage = ref('')
 
 const submitForm = () => {
-  // You can later send this data to your backend via Axios
   console.log('Form submitted:', form.value)
   successMessage.value = 'Thanks for reaching out! We’ll get back to you soon.'
   form.value = { name: '', email: '', message: '' }
