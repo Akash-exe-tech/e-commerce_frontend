@@ -35,7 +35,6 @@
       </tbody>
     </table>
 
-    <!-- Add/Edit Modal -->
     <div
       v-if="showModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
@@ -93,21 +92,25 @@ export default {
       users: [],
       showModal: false,
       editForm: { id: null, name: "", email: "", phone: "" },
+      baseURL: import.meta.env.VITE_API_BASE_URL,
     };
   },
   mounted() {
     this.fetchUsers();
   },
   methods: {
+    getToken() {
+      return localStorage.getItem("token");
+    },
     async fetchUsers() {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:8000/api/admin/users", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get(`${this.baseURL}/admin/users`, {
+          headers: { Authorization: `Bearer ${this.getToken()}` },
         });
         this.users = res.data;
       } catch (err) {
         console.error("Error fetching users", err);
+        alert(err.response?.data?.message || "Failed to load users");
       }
     },
     openModal(user = null) {
@@ -119,39 +122,37 @@ export default {
       this.showModal = true;
     },
     async saveUser() {
-      const token = localStorage.getItem("token");
       try {
         if (this.editForm.id) {
-          // Update existing user
           await axios.put(
-            `http://localhost:8000/api/admin/users/${this.editForm.id}`,
+            `${this.baseURL}/admin/users/${this.editForm.id}`,
             this.editForm,
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${this.getToken()}` } }
           );
         } else {
-          // Create new user
           await axios.post(
-            "http://localhost:8000/api/admin/users",
+            `${this.baseURL}/admin/users`,
             this.editForm,
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${this.getToken()}` } }
           );
         }
         this.showModal = false;
         this.fetchUsers();
       } catch (err) {
         console.error("Error saving user", err);
+        alert(err.response?.data?.message || "Failed to save user");
       }
     },
     async deleteUser(id) {
       if (!confirm("Are you sure?")) return;
       try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:8000/api/admin/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+        await axios.delete(`${this.baseURL}/admin/users/${id}`, {
+          headers: { Authorization: `Bearer ${this.getToken()}` },
         });
         this.fetchUsers();
       } catch (err) {
         console.error("Error deleting user", err);
+        alert(err.response?.data?.message || "Failed to delete user");
       }
     },
   },
