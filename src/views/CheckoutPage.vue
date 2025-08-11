@@ -2,12 +2,10 @@
   <div class="max-w-3xl mx-auto p-6">
     <h2 class="text-2xl font-bold mb-6">Checkout</h2>
 
-    <!-- Total Amount -->
     <div class="text-lg font-semibold mb-4">
       Total Amount to Pay: ₹{{ subtotal }}
     </div>
 
-    <!-- Payment Methods -->
     <div class="mb-6">
       <h3 class="text-lg font-semibold mb-2">Select Payment Method</h3>
       <select v-model="paymentMethod" class="w-full border p-2 rounded">
@@ -18,7 +16,6 @@
       </select>
     </div>
 
-    <!-- Conditional Inputs for Address / UPI / Card Details -->
     <div v-if="paymentMethod === 'cod'" class="mb-4">
       <input
         v-model="address"
@@ -56,7 +53,6 @@
       />
     </div>
 
-    <!-- Pay Button -->
     <button
       @click="placeOrder"
       :disabled="!paymentMethod || loading"
@@ -65,7 +61,6 @@
       {{ loading ? 'Processing...' : 'Place Order' }}
     </button>
 
-    <!-- Success/Error Message -->
     <p v-if="paymentSuccess" class="mt-4 text-green-600 font-medium">
       ✅ Payment successful! Thank you for your purchase.
     </p>

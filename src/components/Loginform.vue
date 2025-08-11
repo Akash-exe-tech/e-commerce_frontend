@@ -66,7 +66,6 @@ const handleLogin = async () => {
     
     console.log('Attempting login with:', { email: email.value })
     
-    
     const response = await api.post('/login', {
       email: email.value,
       password: password.value,
@@ -74,28 +73,32 @@ const handleLogin = async () => {
     
     console.log('Login response:', response.data)
     
-    
-    if (response.data.response_code === 200 && response.data.token) {
-     
-      authLogin(response.data.token)
+    const data = response.data
+
+    if (data.response_code === 200 && data.token) {
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user_info))
+
+      authLogin(data.token)
       
-      console.log('Login successful, token saved')
-      
+      console.log('Login successful, token and user info saved')
       
       emit('close')
       
-      
-      router.push('/profile')
-      
+ 
+      if (data.redirect_to) {
+        router.push(data.redirect_to)
+      } else {
+        router.push('/')
+      }
     } else {
-      
-      error.value = response.data.message || 'Login failed'
-      console.error('Login failed:', response.data)
+      error.value = data.message || 'Login failed'
+      console.error('Login failed:', data)
     }
     
   } catch (err) {
     console.error('Login error:', err)
-    
     
     if (err.response) {
       console.error('Server error:', err.response.data)
