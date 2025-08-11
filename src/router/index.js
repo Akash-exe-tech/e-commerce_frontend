@@ -13,6 +13,7 @@ import ContactUs from '../views/ContactUs.vue'
 import AdminLayout from '../components/AdminLayout.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import Users from "../views/admin/Users.vue";
+import ProductManagement from "../views/admin/ProductMangement.vue";
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -43,6 +44,12 @@ const routes = [
       {
       path: "/admin/users",
       component: Users,
+      meta: { requiresAuth: true, requiresAdmin: true }
+      },
+      {
+      path: 'products',
+      name: 'product-management',
+      component: ProductManagement,
       meta: { requiresAuth: true, requiresAdmin: true }
       }
     ],

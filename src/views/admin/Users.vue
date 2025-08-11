@@ -1,6 +1,13 @@
 <template>
-  <div>
+  <div class="p-6">
     <h2 class="text-2xl font-bold mb-6">User Management</h2>
+
+    <button
+      @click="openModal()"
+      class="bg-green-600 text-white px-4 py-2 rounded mb-4"
+    >
+      Add User
+    </button>
 
     <table class="min-w-full bg-white border rounded">
       <thead>
@@ -17,22 +24,59 @@
           <td class="py-2 px-4">{{ user.email }}</td>
           <td class="py-2 px-4">{{ user.phone }}</td>
           <td class="py-2 px-4 space-x-2">
-            <button @click="editUser(user)" class="bg-blue-500 text-white px-3 py-1 rounded">Edit</button>
-            <button @click="deleteUser(user.id)" class="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+            <button @click="openModal(user)" class="bg-blue-500 text-white px-3 py-1 rounded">
+              Edit
+            </button>
+            <button @click="deleteUser(user.id)" class="bg-red-500 text-white px-3 py-1 rounded">
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <!-- Add/Edit Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    >
       <div class="bg-white p-6 rounded shadow w-96">
-        <h3 class="text-xl font-bold mb-4">Edit User</h3>
-        <input v-model="editForm.name" placeholder="Name" class="border p-2 w-full mb-3" />
-        <input v-model="editForm.email" placeholder="Email" class="border p-2 w-full mb-3" />
-        <input v-model="editForm.phone" placeholder="Phone" class="border p-2 w-full mb-3" />
+        <h3 class="text-xl font-bold mb-4">
+          {{ editForm.id ? 'Edit User' : 'Add User' }}
+        </h3>
+
+        <input
+          v-model="editForm.name"
+          placeholder="Name"
+          class="border p-2 w-full mb-3"
+          required
+        />
+        <input
+          v-model="editForm.email"
+          placeholder="Email"
+          type="email"
+          class="border p-2 w-full mb-3"
+          required
+        />
+        <input
+          v-model="editForm.phone"
+          placeholder="Phone"
+          class="border p-2 w-full mb-3"
+        />
+
         <div class="flex justify-end space-x-2">
-          <button @click="showModal = false" class="px-3 py-1 bg-gray-400 rounded">Cancel</button>
-          <button @click="updateUser" class="px-3 py-1 bg-green-500 text-white rounded">Save</button>
+          <button
+            @click="showModal = false"
+            class="px-3 py-1 bg-gray-400 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveUser"
+            class="px-3 py-1 bg-green-500 text-white rounded"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -66,22 +110,36 @@ export default {
         console.error("Error fetching users", err);
       }
     },
-    editUser(user) {
-      this.editForm = { ...user };
+    openModal(user = null) {
+      if (user) {
+        this.editForm = { ...user };
+      } else {
+        this.editForm = { id: null, name: "", email: "", phone: "" };
+      }
       this.showModal = true;
     },
-    async updateUser() {
+    async saveUser() {
+      const token = localStorage.getItem("token");
       try {
-        const token = localStorage.getItem("token");
-        await axios.put(
-          `http://localhost:8000/api/admin/users/${this.editForm.id}`,
-          this.editForm,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        if (this.editForm.id) {
+          // Update existing user
+          await axios.put(
+            `http://localhost:8000/api/admin/users/${this.editForm.id}`,
+            this.editForm,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        } else {
+          // Create new user
+          await axios.post(
+            "http://localhost:8000/api/admin/users",
+            this.editForm,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        }
         this.showModal = false;
         this.fetchUsers();
       } catch (err) {
-        console.error("Error updating user", err);
+        console.error("Error saving user", err);
       }
     },
     async deleteUser(id) {
