@@ -4,11 +4,9 @@
       🛒 Your Shopping Cart
     </h2>
 
-
     <div v-if="loading" class="text-gray-500 text-lg animate-pulse">
       Loading your cart...
     </div>
-
 
     <div v-else-if="cartItems.length === 0" class="text-center py-12">
       <p class="text-gray-500 text-lg">Your cart is currently empty.</p>
@@ -19,7 +17,6 @@
         🛍 Shop Now
       </router-link>
     </div>
-
 
     <div v-else class="space-y-6">
       <div
@@ -68,40 +65,10 @@
         <button
           @click="goToCheckout"
           class="mt-4 px-6 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+          :disabled="cartItems.length === 0"
         >
           Proceed to Checkout
         </button>
-      </div>
-
-      <div v-if="showPayment" class="mt-6 border-t pt-4">
-        <h3 class="text-lg font-semibold mb-2">Select Payment Method</h3>
-        <select
-          v-model="paymentMethod"
-          class="border p-2 rounded w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option disabled value="">Choose a payment method</option>
-          <option
-            v-for="method in paymentMethods"
-            :key="method.key"
-            :value="method.key"
-          >
-            {{ method.label }}
-          </option>
-        </select>
-
-        <button
-          @click="makePayment"
-          class="mt-4 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Pay Now
-        </button>
-
-        <p
-          v-if="paymentSuccess"
-          class="mt-4 text-green-600 font-medium"
-        >
-          ✅ Payment successful! Thank you for your purchase.
-        </p>
       </div>
     </div>
   </div>
@@ -120,6 +87,7 @@ const fetchCart = async () => {
   loading.value = true;
   try {
     const res = await api.get('/cart');
+    console.log('Cart API Response:', res.data); // Debug log
     cartItems.value = res.data;
   } catch (err) {
     console.error('Failed to load cart:', err);
@@ -156,7 +124,10 @@ const subtotal = computed(() =>
 );
 
 const goToCheckout = () => {
-  router.push('/checkout');
+  // Store cart data in session storage for the checkout page
+  sessionStorage.setItem('cartData', JSON.stringify(cartItems.value));
+  sessionStorage.setItem('cartSubtotal', subtotal.value);
+  router.push('/razor');
 };
 
 onMounted(fetchCart);

@@ -15,6 +15,7 @@
           <th class="py-2 px-4">Name</th>
           <th class="py-2 px-4">Email</th>
           <th class="py-2 px-4">Phone</th>
+          <th class="py-2 px-4">Role</th>
           <th class="py-2 px-4">Actions</th>
         </tr>
       </thead>
@@ -23,11 +24,18 @@
           <td class="py-2 px-4">{{ user.name }}</td>
           <td class="py-2 px-4">{{ user.email }}</td>
           <td class="py-2 px-4">{{ user.phone }}</td>
+          <td class="py-2 px-4 capitalize">{{ user.role }}</td>
           <td class="py-2 px-4 space-x-2">
-            <button @click="openModal(user)" class="bg-blue-500 text-white px-3 py-1 rounded">
+            <button
+              @click="openModal(user)"
+              class="bg-blue-500 text-white px-3 py-1 rounded"
+            >
               Edit
             </button>
-            <button @click="deleteUser(user.id)" class="bg-red-500 text-white px-3 py-1 rounded">
+            <button
+              @click="deleteUser(user.id)"
+              class="bg-red-500 text-white px-3 py-1 rounded"
+            >
               Delete
             </button>
           </td>
@@ -41,7 +49,7 @@
     >
       <div class="bg-white p-6 rounded shadow w-96">
         <h3 class="text-xl font-bold mb-4">
-          {{ editForm.id ? 'Edit User' : 'Add User' }}
+          {{ editForm.id ? "Edit User" : "Add User" }}
         </h3>
 
         <input
@@ -50,6 +58,7 @@
           class="border p-2 w-full mb-3"
           required
         />
+
         <input
           v-model="editForm.email"
           placeholder="Email"
@@ -57,11 +66,39 @@
           class="border p-2 w-full mb-3"
           required
         />
+
         <input
           v-model="editForm.phone"
           placeholder="Phone"
           class="border p-2 w-full mb-3"
         />
+
+        <select
+          v-model="editForm.role"
+          class="border p-2 w-full mb-3"
+          required
+        >
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+
+        <div v-if="!editForm.id">
+          <input
+            v-model="editForm.password"
+            type="password"
+            placeholder="Password"
+            class="border p-2 w-full mb-3"
+            required
+          />
+          <input
+            v-model="editForm.password_confirmation"
+            type="password"
+            placeholder="Confirm Password"
+            class="border p-2 w-full mb-3"
+            required
+          />
+        </div>
 
         <div class="flex justify-end space-x-2">
           <button
@@ -91,7 +128,15 @@ export default {
     return {
       users: [],
       showModal: false,
-      editForm: { id: null, name: "", email: "", phone: "" },
+      editForm: {
+        id: null,
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        password: "",
+        password_confirmation: "",
+      },
       baseURL: import.meta.env.VITE_API_BASE_URL,
     };
   },
@@ -115,9 +160,17 @@ export default {
     },
     openModal(user = null) {
       if (user) {
-        this.editForm = { ...user };
+        this.editForm = { ...user, password: "", password_confirmation: "" };
       } else {
-        this.editForm = { id: null, name: "", email: "", phone: "" };
+        this.editForm = {
+          id: null,
+          name: "",
+          email: "",
+          phone: "",
+          role: "",
+          password: "",
+          password_confirmation: "",
+        };
       }
       this.showModal = true;
     },
@@ -130,11 +183,9 @@ export default {
             { headers: { Authorization: `Bearer ${this.getToken()}` } }
           );
         } else {
-          await axios.post(
-            `${this.baseURL}/admin/users`,
-            this.editForm,
-            { headers: { Authorization: `Bearer ${this.getToken()}` } }
-          );
+          await axios.post(`${this.baseURL}/admin/users`, this.editForm, {
+            headers: { Authorization: `Bearer ${this.getToken()}` },
+          });
         }
         this.showModal = false;
         this.fetchUsers();
