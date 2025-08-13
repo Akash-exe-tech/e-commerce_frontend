@@ -72,6 +72,23 @@
           placeholder="Phone"
           class="border p-2 w-full mb-3"
         />
+<!-- Inside your modal, below Phone input -->
+<input
+  v-if="!editForm.id"
+  v-model="editForm.password"
+  placeholder="Password"
+  type="password"
+  class="border p-2 w-full mb-3"
+  required
+/>
+<input
+  v-if="!editForm.id"
+  v-model="editForm.password_confirmation"
+  placeholder="Confirm Password"
+  type="password"
+  class="border p-2 w-full mb-3"
+  required
+/>
 
         <select
           v-model="editForm.role"

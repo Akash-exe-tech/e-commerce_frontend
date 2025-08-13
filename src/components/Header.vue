@@ -30,18 +30,24 @@
         </div>
       </div>
 
-      <div v-if="showCartButtons" class="flex items-center gap-4 pr-6">
-        <router-link to="/wishlist" title="Wishlist">
-          <button class="bg-white p-2 rounded-full hover:bg-gray-200 transition cursor-pointer">
-            <img src="/download.png" alt="Wishlist" class="h-5 w-5" />
-          </button>
-        </router-link>
-        <router-link to="/cart" title="Cart">
-          <button class="bg-white p-2 rounded-full hover:bg-gray-200 transition cursor-pointer">
-            <img src="/download (1).png" alt="Cart" class="h-5 w-5" />
-          </button>
-        </router-link>
-      </div>
+     <div v-if="showCartButtons" class="flex items-center gap-4 pr-2">
+  <router-link to="/wishlist" title="Wishlist">
+    <img
+      src="/download.png"
+      alt="Wishlist"
+      class="h-10 w-10 cursor-pointer hover:opacity-80 transition -ml-1.8"
+    />
+  </router-link>
+  <router-link to="/cart" title="Cart">
+    <img
+      src="/download (1).png"
+      alt="Cart"
+      class="h-10 w-10 cursor-pointer hover:opacity-80 transition -ml-2"
+    />
+  </router-link>
+</div>
+
+
 
     </div>
   </header>

@@ -16,7 +16,7 @@
           <th class="border px-4 py-2">Name</th>
           <th class="border px-4 py-2">Category</th>
           <th class="border px-4 py-2">Price</th>
-          <th class="border px-4 py-2">Company</th>
+          
           <th class="border px-4 py-2">Actions</th>
         </tr>
       </thead>
@@ -34,7 +34,7 @@
             {{ product.categories?.map(c => c.name).join(', ') }}
           </td>
           <td class="border px-4 py-2">₹{{ product.price }}</td>
-          <td class="border px-4 py-2">{{ product.company_name }}</td>
+          
           <td class="border px-4 py-2 space-x-2">
             <button
               @click="openModal(product)"
@@ -84,26 +84,48 @@
             required
           />
           <input
-            v-model="form.company_name"
-            type="text"
-            placeholder="Company Name"
-            class="w-full border p-2 mb-2"
-          />
+  v-model="form.stock_quantity"
+  type="number"
+  placeholder="Stock Quantity"
+  class="w-full border p-2 mb-2"
+  required
+/>
+
 
           <select
-            v-model="form.category_id"
-            class="w-full border p-2 mb-2"
-            required
-          >
-            <option value="">Select Category</option>
-            <option
-              v-for="cat in categories"
-              :key="cat.id"
-              :value="cat.id"
-            >
-              {{ cat.name }}
-            </option>
-          </select>
+  v-model="form.category_id"
+  class="w-full border p-2 mb-2"
+  @change="handleCategoryChange"
+  required
+>
+  <option value="">Select Category</option>
+  <option
+    v-for="cat in categories"
+    :key="cat.id"
+    :value="cat.id"
+  >
+    {{ cat.name }}
+  </option>
+  <option value="new">➕ Add New Category</option>
+</select>
+
+<!-- Show input only if adding a new category -->
+<div v-if="isAddingCategory" class="flex gap-2 mb-2">
+  <input
+    v-model="newCategoryName"
+    type="text"
+    placeholder="Enter new category name"
+    class="w-full border p-2"
+  />
+  <button
+    type="button"
+    @click="saveCategory"
+    class="bg-blue-500 text-white px-4 py-2 rounded"
+  >
+    Save
+  </button>
+</div>
+
 
           <input
             type="file"
@@ -148,28 +170,38 @@ const form = ref({
   name: "",
   description: "",
   price: "",
-  company_name: "",
+  
   category_id: "",
   image: null,
 });
 
 const fetchProducts = async () => {
   try {
-    const res = await axios.get(`${baseURL}/products`, {
-      headers: { Authorization: `Bearer ${token}` },
+    if (!baseURL) {
+      throw new Error("API base URL is not set! Check your .env file for VITE_API_BASE_URL");
+    }
+
+    console.log("Fetching products from:", `${baseURL}/products`);
+
+    const response = await axios.get(`${baseURL}/products`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
     });
-    products.value = res.data.data;
+
+    products.value = response.data;
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error("Error fetching products:", error.message || error);
   }
 };
+
 
 const fetchCategories = async () => {
   try {
     const res = await axios.get(`${baseURL}/categories`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    categories.value = res.data.data;
+    categories.value = res.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
   }
@@ -182,7 +214,7 @@ const openModal = (product = null) => {
       name: product.name,
       description: product.description,
       price: product.price,
-      company_name: product.company_name,
+      
       category_id: product.categories?.[0]?.id || "",
       image: null,
     };
@@ -192,7 +224,7 @@ const openModal = (product = null) => {
       name: "",
       description: "",
       price: "",
-      company_name: "",
+      stock_quantity: "",
       category_id: "",
       image: null,
     };
@@ -210,8 +242,13 @@ const handleImageUpload = (event) => {
 
 const saveProduct = async () => {
   const formData = new FormData();
+
   Object.keys(form.value).forEach((key) => {
-    if (form.value[key] !== null) {
+    if (key === "image") {
+      if (form.value.image instanceof File) {
+        formData.append("image", form.value.image);
+      }
+    } else {
       formData.append(key, form.value[key]);
     }
   });
@@ -221,19 +258,30 @@ const saveProduct = async () => {
       await axios.post(
         `${baseURL}/products/${editingProduct.value.id}?_method=PUT`,
         formData,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
     } else {
       await axios.post(`${baseURL}/products`, formData, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
     }
+
     closeModal();
     fetchProducts();
   } catch (error) {
-    console.error("Error saving product:", error);
+    console.error("Error saving product:", error.response?.data || error.message);
   }
 };
+
+;
 
 const deleteProduct = async (id) => {
   if (!confirm("Are you sure you want to delete this product?")) return;
@@ -251,6 +299,43 @@ onMounted(() => {
   fetchProducts();
   fetchCategories();
 });
+const isAddingCategory = ref(false);
+const newCategoryName = ref("");
+
+// Triggered when dropdown changes
+const handleCategoryChange = () => {
+  if (form.value.category_id === "new") {
+    isAddingCategory.value = true;
+    newCategoryName.value = "";
+  } else {
+    isAddingCategory.value = false;
+  }
+};
+
+const saveCategory = async () => {
+  if (!newCategoryName.value.trim()) {
+    alert("Please enter a category name");
+    return;
+  }
+
+  try {
+    const res = await axios.post(`${baseURL}/categories`, {
+      name: newCategoryName.value
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // Push the new category into the list and auto-select it
+    categories.value.push(res.data);
+    form.value.category_id = res.data.id;
+    isAddingCategory.value = false;
+
+    console.log("Category added:", res.data);
+  } catch (error) {
+    console.error("Error adding category:", error);
+  }
+};
+
 </script>
 
 <style scoped>

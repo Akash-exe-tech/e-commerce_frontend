@@ -51,7 +51,7 @@ const routes = [
       meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: 'products',
+      path: '/admin/products',
       name: 'product-management',
       component: ProductManagement,
       meta: { requiresAuth: true, requiresAdmin: true }
