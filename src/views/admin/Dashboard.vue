@@ -40,9 +40,13 @@ export default {
     async fetchStats() {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://your-backend-api/api/admin/stats", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+  `${import.meta.env.VITE_API_BASE_URL}/admin/stats`,
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+
         this.stats = response.data;
       } catch (error) {
         console.error("Error fetching stats:", error);

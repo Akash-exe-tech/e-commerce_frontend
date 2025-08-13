@@ -27,7 +27,7 @@ const routes = [
   { path: '/product/:id', name: 'ProductDetails', component: ProductDetails },
   { path: '/about', component: AboutUs },
   { path: '/contact', component: ContactUs },
-
+{ path: '/products', component: ShopPage },
 
   {
     path: '/admin',
@@ -47,7 +47,7 @@ const routes = [
       meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: 'products',
+      path: '/admin/products',
       name: 'product-management',
       component: ProductManagement,
       meta: { requiresAuth: true, requiresAdmin: true }
