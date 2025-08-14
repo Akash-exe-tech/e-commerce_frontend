@@ -14,6 +14,7 @@ import AdminLayout from '../components/AdminLayout.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import Users from "../views/admin/Users.vue";
 import ProductManagement from "../views/admin/ProductMangement.vue";
+import AdminOrders from "../views/admin/Orders.vue";
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -51,7 +52,12 @@ const routes = [
       name: 'product-management',
       component: ProductManagement,
       meta: { requiresAuth: true, requiresAdmin: true }
-      }
+      },
+      {
+    path: '/admin/orders',
+    name: 'AdminOrders',
+    component: AdminOrders
+  },
     ],
   },
 ]
