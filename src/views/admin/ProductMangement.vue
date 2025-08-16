@@ -16,7 +16,6 @@
           <th class="border px-4 py-2">Name</th>
           <th class="border px-4 py-2">Category</th>
           <th class="border px-4 py-2">Price</th>
-          
           <th class="border px-4 py-2">Actions</th>
         </tr>
       </thead>
@@ -34,7 +33,6 @@
             {{ product.categories?.map(c => c.name).join(', ') }}
           </td>
           <td class="border px-4 py-2">₹{{ product.price }}</td>
-          
           <td class="border px-4 py-2 space-x-2">
             <button
               @click="openModal(product)"
@@ -84,48 +82,45 @@
             required
           />
           <input
-  v-model="form.stock_quantity"
-  type="number"
-  placeholder="Stock Quantity"
-  class="w-full border p-2 mb-2"
-  required
-/>
-
+            v-model="form.stock_quantity"
+            type="number"
+            placeholder="Stock Quantity"
+            class="w-full border p-2 mb-2"
+            required
+          />
 
           <select
-  v-model="form.category_id"
-  class="w-full border p-2 mb-2"
-  @change="handleCategoryChange"
-  required
->
-  <option value="">Select Category</option>
-  <option
-    v-for="cat in categories"
-    :key="cat.id"
-    :value="cat.id"
-  >
-    {{ cat.name }}
-  </option>
-  <option value="new">➕ Add New Category</option>
-</select>
+            v-model="form.category_id"
+            class="w-full border p-2 mb-2"
+            @change="handleCategoryChange"
+            required
+          >
+            <option value="">Select Category</option>
+            <option
+              v-for="cat in categories"
+              :key="cat.id"
+              :value="cat.id"
+            >
+              {{ cat.name }}
+            </option>
+            <option value="new">➕ Add New Category</option>
+          </select>
 
-<!-- Show input only if adding a new category -->
-<div v-if="isAddingCategory" class="flex gap-2 mb-2">
-  <input
-    v-model="newCategoryName"
-    type="text"
-    placeholder="Enter new category name"
-    class="w-full border p-2"
-  />
-  <button
-    type="button"
-    @click="saveCategory"
-    class="bg-blue-500 text-white px-4 py-2 rounded"
-  >
-    Save
-  </button>
-</div>
-
+          <div v-if="isAddingCategory" class="flex gap-2 mb-2">
+            <input
+              v-model="newCategoryName"
+              type="text"
+              placeholder="Enter new category name"
+              class="w-full border p-2"
+            />
+            <button
+              type="button"
+              @click="saveCategory"
+              class="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Save
+            </button>
+          </div>
 
           <input
             type="file"
@@ -170,31 +165,21 @@ const form = ref({
   name: "",
   description: "",
   price: "",
-  
+  stock_quantity: "",
   category_id: "",
   image: null,
 });
 
 const fetchProducts = async () => {
   try {
-    if (!baseURL) {
-      throw new Error("API base URL is not set! Check your .env file for VITE_API_BASE_URL");
-    }
-
-    console.log("Fetching products from:", `${baseURL}/products`);
-
-    const response = await axios.get(`${baseURL}/products`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
+    const res = await axios.get(`${baseURL}/products`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    products.value = response.data;
-  } catch (error) {
-    console.error("Error fetching products:", error.message || error);
+    products.value = res.data;
+  } catch (err) {
+    console.error("Error fetching products:", err.response?.data || err.message);
   }
 };
-
 
 const fetchCategories = async () => {
   try {
@@ -202,8 +187,8 @@ const fetchCategories = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     categories.value = res.data;
-  } catch (error) {
-    console.error("Error fetching categories:", error);
+  } catch (err) {
+    console.error("Error fetching categories:", err.response?.data || err.message);
   }
 };
 
@@ -214,7 +199,7 @@ const openModal = (product = null) => {
       name: product.name,
       description: product.description,
       price: product.price,
-      
+      stock_quantity: product.stock_quantity,
       category_id: product.categories?.[0]?.id || "",
       image: null,
     };
@@ -242,67 +227,54 @@ const handleImageUpload = (event) => {
 
 const saveProduct = async () => {
   const formData = new FormData();
-
   Object.keys(form.value).forEach((key) => {
     if (key === "image") {
-      if (form.value.image instanceof File) {
-        formData.append("image", form.value.image);
-      }
+      if (form.value.image instanceof File) formData.append("image", form.value.image);
+    } else if (key === "category_id") {
+      formData.append("category_ids[]", form.value.category_id);
     } else {
-      formData.append(key, form.value[key]);
+      formData.append(key, form.value[key] ?? "");
     }
   });
 
   try {
     if (editingProduct.value) {
       await axios.post(
-        `${baseURL}/products/${editingProduct.value.id}?_method=PUT`,
+        `${baseURL}/admin/products/${editingProduct.value.id}?_method=PUT`,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
       );
     } else {
-      await axios.post(`${baseURL}/products`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${baseURL}/admin/products`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+      );
     }
 
     closeModal();
     fetchProducts();
-  } catch (error) {
-    console.error("Error saving product:", error.response?.data || error.message);
+  } catch (err) {
+    console.error("Error saving product:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Failed to save product");
   }
 };
-
-;
 
 const deleteProduct = async (id) => {
   if (!confirm("Are you sure you want to delete this product?")) return;
   try {
-    await axios.delete(`${baseURL}/products/${id}`, {
+    await axios.delete(`${baseURL}/admin/products/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     fetchProducts();
-  } catch (error) {
-    console.error("Error deleting product:", error);
+  } catch (err) {
+    console.error("Error deleting product:", err.response?.data || err.message);
   }
 };
 
-onMounted(() => {
-  fetchProducts();
-  fetchCategories();
-});
 const isAddingCategory = ref(false);
 const newCategoryName = ref("");
 
-// Triggered when dropdown changes
 const handleCategoryChange = () => {
   if (form.value.category_id === "new") {
     isAddingCategory.value = true;
@@ -313,30 +285,26 @@ const handleCategoryChange = () => {
 };
 
 const saveCategory = async () => {
-  if (!newCategoryName.value.trim()) {
-    alert("Please enter a category name");
-    return;
-  }
-
+  if (!newCategoryName.value.trim()) return alert("Please enter a category name");
   try {
-    const res = await axios.post(`${baseURL}/categories`, {
-      name: newCategoryName.value
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    // Push the new category into the list and auto-select it
+    const res = await axios.post(
+      `${baseURL}/admin/categories`,
+      { name: newCategoryName.value },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     categories.value.push(res.data);
     form.value.category_id = res.data.id;
     isAddingCategory.value = false;
-
-    console.log("Category added:", res.data);
-  } catch (error) {
-    console.error("Error adding category:", error);
+  } catch (err) {
+    console.error("Error adding category:", err.response?.data || err.message);
+    alert(err.response?.data?.message || "Failed to add category");
   }
 };
 
+onMounted(() => {
+  fetchProducts();
+  fetchCategories();
+});
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

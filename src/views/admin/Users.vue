@@ -4,133 +4,126 @@
 
     <button
       @click="openModal()"
-      class="bg-green-600 text-white px-4 py-2 rounded mb-4"
+      class="bg-green-600 text-white px-4 py-2 rounded mb-4 hover:bg-green-700 transition-colors"
     >
       Add User
     </button>
 
-    <table class="min-w-full bg-white border rounded">
-      <thead>
-        <tr class="bg-gray-200 text-left">
-          <th class="py-2 px-4">Name</th>
-          <th class="py-2 px-4">Email</th>
-          <th class="py-2 px-4">Phone</th>
-          <th class="py-2 px-4">Role</th>
-          <th class="py-2 px-4">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id" class="border-t">
-          <td class="py-2 px-4">{{ user.name }}</td>
-          <td class="py-2 px-4">{{ user.email }}</td>
-          <td class="py-2 px-4">{{ user.phone }}</td>
-          <td class="py-2 px-4 capitalize">{{ user.role }}</td>
-          <td class="py-2 px-4 space-x-2">
-            <button
-              @click="openModal(user)"
-              class="bg-blue-500 text-white px-3 py-1 rounded"
-            >
-              Edit
-            </button>
-            <button
-              @click="deleteUser(user.id)"
-              class="bg-red-500 text-white px-3 py-1 rounded"
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="overflow-x-auto">
+      <table class="w-full border border-gray-300">
+        <thead>
+          <tr class="bg-gray-100 border-b">
+            <th class="p-2 border">Name</th>
+            <th class="p-2 border">Email</th>
+            <th class="p-2 border">Phone</th>
+            <th class="p-2 border">Role</th>
+            <th class="p-2 border">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in users" :key="user.id" class="border-b">
+            <td class="p-2 border">{{ user.name }}</td>
+            <td class="p-2 border">{{ user.email }}</td>
+            <td class="p-2 border">{{ user.phone }}</td>
+            <td class="p-2 border">
+              {{ user.roles && user.roles.length ? user.roles[0].name : 'N/A' }}
+            </td>
+            <td class="p-2 border text-center">
+              <button
+                @click="editUser(user)"
+                class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+              >
+                Edit
+              </button>
+              <button
+                @click="deleteUser(user.id)"
+                class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition-colors ml-2"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
+    <!-- Modal -->
     <div
       v-if="showModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
     >
-      <div class="bg-white p-6 rounded shadow w-96">
+      <div class="bg-white p-6 rounded-lg w-96">
         <h3 class="text-xl font-bold mb-4">
           {{ editForm.id ? "Edit User" : "Add User" }}
         </h3>
 
-        <input
-          v-model="editForm.name"
-          placeholder="Name"
-          class="border p-2 w-full mb-3"
-          required
-        />
+        <form @submit.prevent="saveUser">
+          <input
+            v-model="editForm.name"
+            type="text"
+            placeholder="Name"
+            class="w-full p-2 border rounded mb-2"
+            required
+          />
 
-        <input
-          v-model="editForm.email"
-          placeholder="Email"
-          type="email"
-          class="border p-2 w-full mb-3"
-          required
-        />
+          <input
+            v-model="editForm.email"
+            type="email"
+            placeholder="Email"
+            class="w-full p-2 border rounded mb-2"
+            required
+          />
 
-        <input
-          v-model="editForm.phone"
-          placeholder="Phone"
-          class="border p-2 w-full mb-3"
-        />
-<!-- Inside your modal, below Phone input -->
-<input
-  v-if="!editForm.id"
-  v-model="editForm.password"
-  placeholder="Password"
-  type="password"
-  class="border p-2 w-full mb-3"
-  required
-/>
-<input
-  v-if="!editForm.id"
-  v-model="editForm.password_confirmation"
-  placeholder="Confirm Password"
-  type="password"
-  class="border p-2 w-full mb-3"
-  required
-/>
+          <input
+            v-model="editForm.phone"
+            type="text"
+            placeholder="Phone"
+            class="w-full p-2 border rounded mb-2"
+          />
 
-        <select
-          v-model="editForm.role"
-          class="border p-2 w-full mb-3"
-          required
-        >
-          <option value="">Select Role</option>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
+          <select
+            v-model="editForm.role"
+            class="w-full p-2 border rounded mb-2"
+            required
+          >
+            <option value="" disabled>Select Role</option>
+            <option v-for="role in roles" :key="role.id" :value="role.id">
+              {{ role.name }}
+            </option>
+          </select>
 
-        <div v-if="!editForm.id">
           <input
             v-model="editForm.password"
             type="password"
             placeholder="Password"
-            class="border p-2 w-full mb-3"
-            required
+            class="w-full p-2 border rounded mb-2"
+            :required="!editForm.id"
           />
+
           <input
             v-model="editForm.password_confirmation"
             type="password"
             placeholder="Confirm Password"
-            class="border p-2 w-full mb-3"
-            required
+            class="w-full p-2 border rounded mb-2"
+            :required="!editForm.id"
           />
-        </div>
 
-        <div class="flex justify-end space-x-2">
-          <button
-            @click="showModal = false"
-            class="px-3 py-1 bg-gray-400 rounded"
-          >
-            Cancel
-          </button>
-          <button
-            @click="saveUser"
-            class="px-3 py-1 bg-green-500 text-white rounded"
-          >
-            Save
-          </button>
-        </div>
+          <div class="flex justify-end space-x-2">
+            <button
+              type="button"
+              @click="closeModal"
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Save
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -140,10 +133,10 @@
 import axios from "axios";
 
 export default {
-  name: "Users",
   data() {
     return {
       users: [],
+      roles: [], // ✅ roles array added
       showModal: false,
       editForm: {
         id: null,
@@ -159,11 +152,13 @@ export default {
   },
   mounted() {
     this.fetchUsers();
+    this.fetchRoles(); // ✅ load roles
   },
   methods: {
     getToken() {
       return localStorage.getItem("token");
     },
+
     async fetchUsers() {
       try {
         const res = await axios.get(`${this.baseURL}/admin/users`, {
@@ -172,25 +167,54 @@ export default {
         this.users = res.data;
       } catch (err) {
         console.error("Error fetching users", err);
-        alert(err.response?.data?.message || "Failed to load users");
       }
     },
-    openModal(user = null) {
-      if (user) {
-        this.editForm = { ...user, password: "", password_confirmation: "" };
-      } else {
-        this.editForm = {
-          id: null,
-          name: "",
-          email: "",
-          phone: "",
-          role: "",
-          password: "",
-          password_confirmation: "",
-        };
+
+    async fetchRoles() {
+      try {
+        const res = await axios.get(`${this.baseURL}/admin/roles`, {
+          headers: { Authorization: `Bearer ${this.getToken()}` },
+        });
+        this.roles = res.data;
+      } catch (err) {
+        console.error("Error fetching roles", err);
       }
+    },
+
+    openModal() {
+      this.resetForm();
       this.showModal = true;
     },
+
+    closeModal() {
+      this.showModal = false;
+    },
+
+    resetForm() {
+      this.editForm = {
+        id: null,
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        password: "",
+        password_confirmation: "",
+      };
+    },
+
+    editUser(user) {
+      this.editForm = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        role: user.roles && user.roles.length ? user.roles[0].id : "",
+        password: "",
+        password_confirmation: "",
+      };
+      this.showModal = true;
+    },
+
     async saveUser() {
       try {
         if (this.editForm.id) {
@@ -204,15 +228,15 @@ export default {
             headers: { Authorization: `Bearer ${this.getToken()}` },
           });
         }
-        this.showModal = false;
         this.fetchUsers();
+        this.closeModal();
       } catch (err) {
         console.error("Error saving user", err);
-        alert(err.response?.data?.message || "Failed to save user");
       }
     },
+
     async deleteUser(id) {
-      if (!confirm("Are you sure?")) return;
+      if (!confirm("Are you sure you want to delete this user?")) return;
       try {
         await axios.delete(`${this.baseURL}/admin/users/${id}`, {
           headers: { Authorization: `Bearer ${this.getToken()}` },
@@ -220,7 +244,6 @@ export default {
         this.fetchUsers();
       } catch (err) {
         console.error("Error deleting user", err);
-        alert(err.response?.data?.message || "Failed to delete user");
       }
     },
   },

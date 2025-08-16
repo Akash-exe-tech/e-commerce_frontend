@@ -15,6 +15,7 @@ import AdminLayout from '../components/AdminLayout.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import Users from "../views/admin/Users.vue";
 import ProductManagement from "../views/admin/ProductMangement.vue";
+import AdminOrderManagement from "../views/admin/AdminOrderManagement.vue";
 import PaymentPage from '../views/Razorpay.vue'
 
 const routes = [
@@ -46,15 +47,21 @@ const routes = [
         meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: "/admin/users",
-      component: Users,
-      meta: { requiresAuth: true, requiresAdmin: true }
+        path: "/admin/users",
+        component: Users,
+        meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: '/admin/products',
-      name: 'product-management',
-      component: ProductManagement,
-      meta: { requiresAuth: true, requiresAdmin: true }
+        path: '/admin/products',
+        name: 'product-management',
+        component: ProductManagement,
+        meta: { requiresAuth: true, requiresAdmin: true }
+      },
+      {
+        path: '/admin/orders',
+        name: 'AdminOrders',
+        component: AdminOrderManagement,
+        meta: { requiresAuth: true, requiresAdmin: true }
       }
     ],
   },

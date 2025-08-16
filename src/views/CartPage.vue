@@ -11,7 +11,7 @@
     <div v-else-if="cartItems.length === 0" class="text-center py-12">
       <p class="text-gray-500 text-lg">Your cart is currently empty.</p>
       <router-link
-        to="/products"
+        to="/shop"
         class="inline-block mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
       >
         🛍 Shop Now
