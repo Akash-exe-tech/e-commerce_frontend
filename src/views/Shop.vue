@@ -131,10 +131,9 @@ onMounted(() => {
           class="border rounded-lg p-4 shadow-md cursor-pointer hover:shadow-lg transition bg-white hover:-translate-y-1 transform duration-200"
         >
           <img
-            :src="product.image_url"
+            :src="product.image_url || '/images/fallback-product'"
             alt="Product Image"
             class="w-full h-48 object-contain mb-2 rounded bg-gray-50"
-            @error="$event.target.src='https://via.placeholder.com/150'"
           />
           <h2 class="text-lg font-semibold text-gray-800">{{ product.name }}</h2>
           <p class="text-green-600 font-bold mt-1">₹{{ product.price }}</p>

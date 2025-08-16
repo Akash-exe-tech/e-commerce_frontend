@@ -6,7 +6,7 @@
 
     <div v-else-if="wishlistItems.length === 0" class="text-gray-400">
       No items in your wishlist.
-      <router-link to="/products" class="text-blue-600 underline ml-2">
+      <router-link to="/shop" class="text-blue-600 underline ml-2">
         Shop Now
       </router-link>
     </div>

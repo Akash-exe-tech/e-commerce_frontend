@@ -7,6 +7,7 @@ import RegisterView from '../views/RegisterView.vue'
 import CartPage from '../views/CartPage.vue'
 import WishlistPage from '../views/wishlist.vue'
 import CheckoutPage from '../views/CheckoutPage.vue'
+import Orders from '../views/orders.vue'
 import Profile from '../views/Profile.vue'
 import AboutUs from '../views/AboutUs.vue'
 import ContactUs from '../views/ContactUs.vue'
@@ -14,7 +15,8 @@ import AdminLayout from '../components/AdminLayout.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import Users from "../views/admin/Users.vue";
 import ProductManagement from "../views/admin/ProductMangement.vue";
-import AdminOrders from "../views/admin/Orders.vue";
+import AdminOrderManagement from "../views/admin/AdminOrderManagement.vue";
+import PaymentPage from '../views/Razorpay.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -23,12 +25,14 @@ const routes = [
   { path: '/cart', name: 'Cart', component: CartPage },
   { path: '/wishlist', name: 'Wishlist', component: WishlistPage },
   { path: '/checkout', name: 'Checkout', component: CheckoutPage },
+  { path: '/orders', name: 'Orders', component: Orders, meta: { requiresAuth: true } },
   { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
   { path: '/shop', name: 'Shop', component: ShopPage },
   { path: '/product/:id', name: 'ProductDetails', component: ProductDetails },
   { path: '/about', component: AboutUs },
   { path: '/contact', component: ContactUs },
-{ path: '/products', component: ShopPage },
+  { path: '/razor', name: 'Razor', component: PaymentPage },
+
 
   {
     path: '/admin',
@@ -43,21 +47,22 @@ const routes = [
         meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: "/admin/users",
-      component: Users,
-      meta: { requiresAuth: true, requiresAdmin: true }
+        path: "/admin/users",
+        component: Users,
+        meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-      path: '/admin/products',
-      name: 'product-management',
-      component: ProductManagement,
-      meta: { requiresAuth: true, requiresAdmin: true }
+        path: '/admin/products',
+        name: 'product-management',
+        component: ProductManagement,
+        meta: { requiresAuth: true, requiresAdmin: true }
       },
       {
-    path: '/admin/orders',
-    name: 'AdminOrders',
-    component: AdminOrders
-  },
+        path: '/admin/orders',
+        name: 'AdminOrders',
+        component: AdminOrderManagement,
+        meta: { requiresAuth: true, requiresAdmin: true }
+      }
     ],
   },
 ]
